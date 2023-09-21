@@ -1,3 +1,4 @@
+
 variable "region" {
   default = "us-east-1"
 }
@@ -6,7 +7,31 @@ variable "vpc_main_cidr" {
   description = "The main IPv4 CIDR for VPC"
 }
 
-variable "subnet_cidr" {
+variable "vpc_name" {}
+
+variable "public_subnet_cidr" {
   type        = list(any)
-  description = "The main IPv4 CIDR for subnet"
+  description = "List of CIDRs for public subnets"
+  default     = []
+}
+
+variable "private_subnet_cidr" {
+  type        = list(any)
+  description = "List of CIDRs for private subnets"
+  default     = []
+}
+
+variable "environment" {}
+variable "organization" {}
+
+variable "region_to_name_map" {
+  type = map
+  default = {
+    us-east-1 = "usea1"
+    us-east-2 = "usea2"
+    us-west-2 = "uswe2"
+    ap-south-1 = "apso1"
+    ap-southeast-1 = "apse1"
+  }
+
 }
