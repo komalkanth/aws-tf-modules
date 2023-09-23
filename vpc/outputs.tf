@@ -15,5 +15,5 @@ output "avail_zones" {
 } */
 
 output "public_subnet_locals" {
-  value = local.public_subnet_map[*]
+  value = local.public_subnet_set
 }
