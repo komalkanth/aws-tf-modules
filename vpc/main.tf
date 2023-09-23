@@ -11,31 +11,55 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
   tags = merge(local.default_tags, {
     Name = "${var.environment}-${var.region_to_name_map[var.region]}-${var.vpc_name}"
-  }
+    }
   )
+}
+
+locals {
+  public_subnet_map = flatten([
+    for select_az, public_subnet_cidr_list in var.public_subnet_cidr_map: [
+      for each_subnet_cir in public_subnet_cidr_list : {
+        availability_zone = select_az
+        cidr_block = each_subnet_cir
+        subnet_number = "${index(public_subnet_cidr_list, each_subnet_cir) + 1}"
+      }
+    ]
+  ])
 }
 
 resource "aws_subnet" "public_subnet" {
-  count      = length(var.public_subnet_cidr)
-  vpc_id     = aws_vpc.main.id
-  cidr_block = var.public_subnet_cidr[count.index]
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  vpc_id            = aws_vpc.main.id
+  count             = length(local.public_subnet_map)
+  cidr_block        = local.public_subnet_map[count.index].cidr_block
+  availability_zone = local.public_subnet_map[count.index].availability_zone
 
   tags = merge(local.default_tags, {
-    Name = "${var.environment}-${var.region_to_name_map[var.region]}-${var.vpc_name}-pub-sbnt-${substr(data.aws_availability_zones.available.names[count.index], -2, -1)}"
-  }
+    Name = "${var.environment}-${var.region_to_name_map[var.region]}-${replace(var.vpc_name, "-", "")}-pubsbnt${substr(local.public_subnet_map[count.index].availability_zone, -2, -1)}-${local.public_subnet_map[count.index].subnet_number}"
+    }
   )
 }
 
+locals {
+  private_subnet_map = flatten([
+    for select_az, private_subnet_cidr_list in var.private_subnet_cidr_map: [
+      for each_subnet_cir in private_subnet_cidr_list : {
+        availability_zone = select_az
+        cidr_block = each_subnet_cir
+        subnet_number = "${index(private_subnet_cidr_list, each_subnet_cir) + 1}"
+      }
+    ]
+  ])
+}
+
 resource "aws_subnet" "private_subnet" {
-  count      = length(var.private_subnet_cidr)
-  vpc_id     = aws_vpc.main.id
-  cidr_block = var.private_subnet_cidr[count.index]
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  vpc_id            = aws_vpc.main.id
+  count             = length(local.private_subnet_map)
+  cidr_block        = local.private_subnet_map[count.index].cidr_block
+  availability_zone = local.private_subnet_map[count.index].availability_zone
 
   tags = merge(local.default_tags, {
-    Name = "${var.environment}-${var.region_to_name_map[var.region]}-${var.vpc_name}-pvt-sbnt-${substr(data.aws_availability_zones.available.names[count.index], -2, -1)}"
-  }
+    Name = "${var.environment}-${var.region_to_name_map[var.region]}-${replace(var.vpc_name, "-", "")}-pvtsbnt${substr(local.private_subnet_map[count.index].availability_zone, -2, -1)}-${local.private_subnet_map[count.index].subnet_number}"
+    }
   )
 }
 
@@ -44,6 +68,6 @@ resource "aws_internet_gateway" "main_igw" {
 
   tags = merge(local.default_tags, {
     Name = "${var.environment}-${var.region_to_name_map[var.region]}-${var.vpc_name}-igw"
-  }
+    }
   )
 }

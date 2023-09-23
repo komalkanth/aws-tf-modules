@@ -1,1 +1,1 @@
-TODO: Use Terraform modulus operator (%) to ensure that the availability zones only roundrobin around 3 AZs
+TODO:

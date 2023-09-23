@@ -1,4 +1,4 @@
-output "region" {
+/* output "region" {
   value = var.region
 }
 
@@ -12,4 +12,8 @@ output "public_subnet_ids" {
 
 output "avail_zones" {
   value = data.aws_availability_zones.available.names
+} */
+
+output "public_subnet_locals" {
+  value = local.public_subnet_map[*]
 }
