@@ -51,11 +51,11 @@ Creates multiple maps with all relevant configs grouped together
 
 locals {
   public_subnet_set = flatten([
-    for selected_az, public_subnet_map in var.public_subnet_cidr_map: [
+    for selected_az, public_subnet_map in var.public_subnet_cidr_map : [
       for subnetnumber, cidrblock in public_subnet_map : {
         availability_zone = selected_az
-        cidr_block = cidrblock
-        subnet_number = "pubsbnt${substr(selected_az, -2, -1)}-${substr(subnetnumber, -1, -1)}"
+        cidr_block        = cidrblock
+        subnet_number     = "pubsbnt${substr(selected_az, -2, -1)}-${substr(subnetnumber, -1, -1)}"
       }
     ]
   ])
@@ -64,11 +64,11 @@ locals {
 
 locals {
   private_subnet_set = flatten([
-    for selected_az, private_subnet_map in var.private_subnet_cidr_map: [
+    for selected_az, private_subnet_map in var.private_subnet_cidr_map : [
       for subnetnumber, cidrblock in private_subnet_map : {
         availability_zone = selected_az
-        cidr_block = cidrblock
-        subnet_number = "pvtsbnt${substr(selected_az, -2, -1)}-${substr(subnetnumber, -1, -1)}"
+        cidr_block        = cidrblock
+        subnet_number     = "pvtsbnt${substr(selected_az, -2, -1)}-${substr(subnetnumber, -1, -1)}"
       }
     ]
   ])
@@ -86,18 +86,18 @@ locals {
 
 locals {
   public_subnet_cidr_list = flatten([
-    for selected_az, public_subnet_map in var.public_subnet_cidr_map: [
-      for subnet_number, subnet_cidr in public_subnet_map: subnet_cidr
-      ]
-    ])
+    for selected_az, public_subnet_map in var.public_subnet_cidr_map : [
+      for subnet_number, subnet_cidr in public_subnet_map : subnet_cidr
+    ]
+  ])
 }
 
 locals {
   private_subnet_cidr_list = flatten([
-    for selected_az, private_subnet_map in var.private_subnet_cidr_map: [
-      for subnet_number, subnet_cidr in private_subnet_map: subnet_cidr
-      ]
-    ])
+    for selected_az, private_subnet_map in var.private_subnet_cidr_map : [
+      for subnet_number, subnet_cidr in private_subnet_map : subnet_cidr
+    ]
+  ])
 }
 
 
@@ -113,15 +113,15 @@ Used in NACL subnet association.
 
 locals {
   public_subnet_id_list = flatten([
-    for subnet_name, subnet_id in local.public_subnet_name2id_map: subnet_id
-    ])
+    for subnet_name, subnet_id in local.public_subnet_name2id_map : subnet_id
+  ])
 }
 
 
 locals {
   private_subnet_id_list = flatten([
-    for subnet_name, subnet_id in local.private_subnet_name2id_map: subnet_id
-    ])
+    for subnet_name, subnet_id in local.private_subnet_name2id_map : subnet_id
+  ])
 }
 
 
@@ -137,13 +137,13 @@ locals {
 
 locals {
   public_subnet_name2id_map = {
-    for subnetkey, subnetdetails in aws_subnet.public_subnet: subnetdetails.tags.Name => subnetdetails.id
-    }
+    for subnetkey, subnetdetails in aws_subnet.public_subnet : subnetdetails.tags.Name => subnetdetails.id
+  }
 }
 
 
 locals {
   private_subnet_name2id_map = {
-    for subnetkey, subnetdetails in aws_subnet.private_subnet: subnetdetails.tags.Name => subnetdetails.id
-    }
+    for subnetkey, subnetdetails in aws_subnet.private_subnet : subnetdetails.tags.Name => subnetdetails.id
+  }
 }
