@@ -14,10 +14,18 @@ output "public_subnet_id_list" {
   value = local.public_subnet_id_list
 }
 
+output "public_subnet_cidr_list" {
+  value = local.public_subnet_cidr_list
+}
+
 output "private_subnet_name2id_map" {
   value = local.private_subnet_name2id_map
 }
 
 output "private_subnet_id_list" {
   value = local.private_subnet_id_list
+}
+
+output "private_subnet_cidr_list" {
+  value = local.private_subnet_cidr_list
 }

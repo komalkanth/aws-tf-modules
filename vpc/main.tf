@@ -43,7 +43,7 @@ resource "aws_subnet" "private_subnet" {
 }
 
 
-
+# Resource to create Internet Gateway
 resource "aws_internet_gateway" "main_igw" {
   vpc_id = aws_vpc.main.id
 
@@ -54,7 +54,7 @@ resource "aws_internet_gateway" "main_igw" {
   )
 }
 
-
+# Resource to create dedicated Route table for public subnets so that they can have route to internet
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
 
@@ -65,12 +65,14 @@ resource "aws_route_table" "public_rt" {
   )
 }
 
+# Resource to create public Route table association to public subnets so that they can have route to internet
 resource "aws_route_table_association" "public_rt_assoc" {
   for_each = local.public_subnet_name2id_map
   subnet_id      = each.value
   route_table_id = aws_route_table.public_rt.id
 }
 
+# Resource to add dfault route to public_rt Route table pointing to IGW
 resource "aws_route" "public_rt_route" {
   route_table_id            = aws_route_table.public_rt.id
   destination_cidr_block    = "0.0.0.0/0"
@@ -79,7 +81,7 @@ resource "aws_route" "public_rt_route" {
 }
 
 
-
+# Resource to create dedicated Route table for private subnets without internet access
 resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.main.id
 
@@ -90,13 +92,14 @@ resource "aws_route_table" "private_rt" {
   )
 }
 
+# Resource to create private Route table association to private subnets
 resource "aws_route_table_association" "private_rt_assoc" {
   for_each = local.private_subnet_name2id_map
   subnet_id      = each.value
   route_table_id = aws_route_table.private_rt.id
 }
 
-
+# Resource to create an ACL for public subnets currently allowing traffic both ways
 resource "aws_network_acl" "public_subnet_nacl" {
   vpc_id = aws_vpc.main.id
   subnet_ids =  local.public_subnet_id_list
@@ -130,7 +133,7 @@ resource "aws_network_acl" "public_subnet_nacl" {
   )
 }
 
-
+# Resource to create an ACL for private subnets currently allowing traffic both ways
 resource "aws_network_acl" "private_subnet_nacl" {
   vpc_id = aws_vpc.main.id
   subnet_ids =  local.private_subnet_id_list
