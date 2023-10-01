@@ -102,7 +102,7 @@ resource "aws_route_table_association" "private_rt_assoc" {
 # Resource to create an ACL for public subnets currently allowing traffic both ways
 resource "aws_network_acl" "public_subnet_nacl" {
   vpc_id     = aws_vpc.main.id
-  subnet_ids = local.public_subnet_id_list
+  subnet_ids = [for subnet_name, subnet_id in local.public_subnet_name2id_map : subnet_id]
 
   egress {
     protocol   = -1
@@ -136,7 +136,7 @@ resource "aws_network_acl" "public_subnet_nacl" {
 # Resource to create an ACL for private subnets currently allowing traffic both ways
 resource "aws_network_acl" "private_subnet_nacl" {
   vpc_id     = aws_vpc.main.id
-  subnet_ids = local.private_subnet_id_list
+  subnet_ids = [for subnet_name, subnet_id in local.private_subnet_name2id_map : subnet_id]
 
   egress {
     protocol   = -1

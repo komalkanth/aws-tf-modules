@@ -102,31 +102,6 @@ locals {
 
 
 
-/* Produces a list of ids of all the public subnets deployed.
-Used in NACL subnet association.
-"public_subnet_id_list" = [
-  "subnet-0c3b7a3ede8027c88",
-  "subnet-044c00a73b2de4470",
-  "subnet-0bcdd1dc534433aa7",
-  "subnet-078919335491582dc",
-] */
-
-locals {
-  public_subnet_id_list = flatten([
-    for subnet_name, subnet_id in local.public_subnet_name2id_map : subnet_id
-  ])
-}
-
-
-locals {
-  private_subnet_id_list = flatten([
-    for subnet_name, subnet_id in local.private_subnet_name2id_map : subnet_id
-  ])
-}
-
-
-
-
 /* Produces a map of subnet name to subnet ID similar to below
 "public_subnet_name2id_map" = {
   "prod-usea1-vpc1-pubsbnt1a-1" = "subnet-0c3b7a3ede8027c88"
@@ -145,5 +120,21 @@ locals {
 locals {
   private_subnet_name2id_map = {
     for subnetkey, subnetdetails in aws_subnet.private_subnet : subnetdetails.tags.Name => subnetdetails.id
+  }
+}
+
+locals {
+  public_subnet_cidr_id_map = flatten([{
+    for subnetkey, subnetdetails in aws_subnet.public_subnet : subnetdetails.tags.Name => {
+      "subnet_cidr_block" = subnetdetails.cidr_block
+      "subnet_id" = subnetdetails.id
+    }
+  }
+  ])
+}
+
+locals {
+  private_subnet_cidr_id_map = {
+    for subnetkey, subnetdetails in aws_subnet.private_subnet : subnetdetails.tags.Name => {"${subnetdetails.cidr_block}" = subnetdetails.id}
   }
 }
