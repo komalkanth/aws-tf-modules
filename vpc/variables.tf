@@ -7,6 +7,8 @@ variable "vpc_main_cidr" {
   description = "The main IPv4 CIDR for VPC"
 }
 
+variable "default_tags" {}
+
 variable "vpc_name" {}
 
 variable "public_subnet_cidr_map" {

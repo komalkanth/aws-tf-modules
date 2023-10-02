@@ -4,7 +4,7 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = merge(
-    local.default_tags, {
+    var.default_tags, {
       Name = "${var.environment}-${var.region_to_name_map[var.region]}-${var.vpc_name}"
     }
   )
@@ -20,7 +20,7 @@ resource "aws_subnet" "public_subnet" {
   availability_zone = each.value.availability_zone
 
   tags = merge(
-    local.default_tags, {
+    var.default_tags, {
       Name = "${var.environment}-${var.region_to_name_map[var.region]}-${replace(var.vpc_name, "-", "")}-${each.value.subnet_number}"
     }
   )
@@ -36,7 +36,7 @@ resource "aws_subnet" "private_subnet" {
   availability_zone = each.value.availability_zone
 
   tags = merge(
-    local.default_tags, {
+    var.default_tags, {
       Name = "${var.environment}-${var.region_to_name_map[var.region]}-${replace(var.vpc_name, "-", "")}-${each.value.subnet_number}"
     }
   )
@@ -48,7 +48,7 @@ resource "aws_internet_gateway" "main_igw" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(
-    local.default_tags, {
+    var.default_tags, {
       Name = "${var.environment}-${var.region_to_name_map[var.region]}-${replace(var.vpc_name, "-", "")}-igw"
     }
   )
@@ -59,7 +59,7 @@ resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(
-    local.default_tags, {
+    var.default_tags, {
       Name = "${var.environment}-${var.region_to_name_map[var.region]}-${replace(var.vpc_name, "-", "")}-pub-rt"
     }
   )
@@ -86,7 +86,7 @@ resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(
-    local.default_tags, {
+    var.default_tags, {
       Name = "${var.environment}-${var.region_to_name_map[var.region]}-${replace(var.vpc_name, "-", "")}-pvt-rt"
     }
   )
@@ -127,7 +127,7 @@ resource "aws_network_acl" "public_subnet_nacl" {
   }
 
   tags = merge(
-    local.default_tags, {
+    var.default_tags, {
       Name = "${var.environment}-${var.region_to_name_map[var.region]}-${replace(var.vpc_name, "-", "")}-pub-nacl"
     }
   )
@@ -161,7 +161,7 @@ resource "aws_network_acl" "private_subnet_nacl" {
   }
 
   tags = merge(
-    local.default_tags, {
+    var.default_tags, {
       Name = "${var.environment}-${var.region_to_name_map[var.region]}-${replace(var.vpc_name, "-", "")}-pvt-nacl"
     }
   )

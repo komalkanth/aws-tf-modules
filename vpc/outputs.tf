@@ -6,6 +6,18 @@ output "vpc_id" {
   value = aws_vpc.main.id
 }
 
+output "organization" {
+  value = var.organization
+}
+
+output "environment" {
+  value = var.environment
+}
+
+output "default_tags" {
+  value = var.default_tags
+}
+
 output "public_subnet_name2id_map" {
   value = local.public_subnet_name2id_map
 }
